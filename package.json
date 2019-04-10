@@ -1,0 +1,10 @@
+{
+  "name": "win-screenshot",
+  "version": "1.3.0",
+  "description": "Screenshot Library",
+  "main": "index.js",
+  "author": "Souleh Shaikh",
+  "license": "MIT",
+  "types": "win-screenshot.d.ts",
+  "git": "https://github.com/soulehshaikh99/win-screenshot.git"
+}
