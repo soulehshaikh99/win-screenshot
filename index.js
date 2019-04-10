@@ -127,7 +127,7 @@ function commonMethod(path, command) {
         status['buffer'] = buffer;
         return {...status};
     } else  {
-        return new Exception('Process failed due to an unknown error!');
+        return new Exception('Process failed due to an unknown error!'); 
     }
 }
 
