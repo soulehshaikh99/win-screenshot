@@ -56,13 +56,13 @@ class Screenshot {
                 let y1 = coords.y1;
                 let y2 = coords.y2;
                 if (x1 >= 0 && y1 >= 0 && x2 >= 0 && y2 >= 0) {
-                    return commonMethod(options.path, `${__dirname}\\libs\\screenshot_coordinates.exe ${x1} ${y1} ${x2} ${y2} ${imageFormat}`);
+                    return commonMethod1(options.path, `${__dirname}\\libs\\screenshot_coordinates.exe ${x1} ${y1} ${x2} ${y2} ${imageFormat}`);
                 } else {
                     throw new Exception("Missing coordinate values or negative coordinates received.")
                 }
             }
             else  {
-                return commonMethod(options.path, `${__dirname}\\libs\\screenshot_fullscreen.exe ${imageFormat}`);
+                return commonMethod1(options.path, `${__dirname}\\libs\\screenshot_fullscreen.exe ${imageFormat}`);
             }
         }
     };
@@ -76,7 +76,8 @@ class Screenshot {
      * @public
      * @static
      * @function
-     * @param {ImageFormat} [imageFormat=ImageFormat.PNG] Specifies the format type of the image.
+     * @param {Object} [options={}] The Options object
+     * @param {Object} [options.ImageFormat=ImageFormat.PNG] Specifies the format type of the image.
      * @return {Array} [array] An array which contains multiple JS objects. The JS object is made up of:
      * processId: The Process Id of every active window.
      * processHandle: The Process Handle of every active window.
@@ -89,21 +90,32 @@ class Screenshot {
      * bottomRightY: Ending Coordinate Y axis of window.
      * imageBuffer: returns a base64 encoded string which needs to be converted to buffer to be written into image format.
      */
-    static allWindows(imageFormat)  {
-        if (imageFormat)    {
-            let child = spawnSync("cmd.exe", ["/c", `${__dirname}\\libs\\get_all_windows_data.exe ${imageFormat}`]);
-            return JSON.parse(child.stdout.toString());
-        } else  {
-            throw new Exception("Missing parameter format name { PNG, JPEG, GIF, BMP, TIFF}");
-        }
+    static allWindows(options)  {
+        return commonMethod2(options, "get_all_windows_data.exe");
+    }
+
+    /**
+     * This function returns coordinates of taskbar and its image buffer encoded in base64 string format.
+     *
+     * @public
+     * @static
+     * @function
+     * @param {Object} [options={}] The Options object
+     * @param {Object} [options.ImageFormat=ImageFormat.PNG] Specifies the format type of the image.
+     * @return {Array} [array] An array which contains multiple JS objects. The JS object is made up of:
+     * topLeftX: Starting Coordinate X axis of taskbar.
+     * topLeftY: Starting Coordinate Y axis of taskbar.
+     * bottomRightX: Ending Coordinate X axis of taskbar.
+     * bottomRightY: Ending Coordinate Y axis of taskbar.
+     * imageBuffer: returns a base64 encoded string which needs to be converted to buffer to be written into image format.
+     */
+    static captureTaskBar(options) {
+        return commonMethod2(options, "capture_taskbar.exe");
     }
 }
 
 /**
- * This function finds every possible process which has a Main Window Title or the Active Windows.
- * It focuses every window and tries to calculates its most perfect Region (i.e. Starting and Ending Coordinates) using a complex algorithm.
- * It then saves screenshot of every window's calculated region at temporary location and reads its buffer value and discards that temporary file
- * at the end of the program.
+ * Common Method for take function
  *
  * @private
  * @function
@@ -113,7 +125,7 @@ class Screenshot {
  * writeStatus: returns true if the path parameter was specified and file was written successfully.
  * buffer: returns a base64 encoded string which needs to be converted to buffer to be written into image format.
  */
-function commonMethod(path, command) {
+function commonMethod1(path, command) {
     const tempFile = `${os.tmpdir()}\\temp1.png`;
     const process = spawnSync('cmd.exe', ["/c", `${command} ${tempFile}`]);
     if (process.status === 0)   {
@@ -128,6 +140,25 @@ function commonMethod(path, command) {
         return {...status};
     } else  {
         return new Exception('Process failed due to an unknown error!'); 
+    }
+}
+
+/**
+ * Common Method for allWindows and captureTaskBar function
+ *
+ * @private
+ * @function
+ * @param {Object} [options={}] The Options object
+ * @param {Object} [options.imageFormat=ImageFormat.PNG] Specifies the format type of the image.
+ * @param {string} [programName] Specifies the program name for inter-process communication call.
+ * @return {Array} It return an array containing the appropriate JS Object parsed from JSON data fetched from executable.
+ */
+function commonMethod2(options, programName)    {
+    if (options) {
+        let child = spawnSync("cmd.exe", ["/c", `${__dirname}\\libs\\${programName} ${options.imageFormat}`]);
+        return JSON.parse(child.stdout.toString());
+    } else {
+        throw new Exception("Missing parameter format name { PNG, JPEG, GIF, BMP, TIFF}");
     }
 }
 
