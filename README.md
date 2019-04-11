@@ -15,7 +15,7 @@
 3) All Active Windows can be screenshoted at once automatically just by calling a single method.
 4) This library supports various image formats to save your screenshot in. (BMP, GIF, JPEG, PNG, TIFF).
 
-```
+```javascript
 function test() {
   console.log("notice the blank line before this function?");
 }
