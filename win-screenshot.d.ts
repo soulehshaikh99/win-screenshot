@@ -15,7 +15,7 @@ interface TakeScreenShotOptions {
     path?: string
 }
 
-interface AllWindowsScreenShotOptions   {
+interface ImageFormatOptions   {
     imageFormat?: {
         BMP : "BMP",
         GIF : "GIF",
@@ -36,6 +36,14 @@ interface AllWindowsReturnValues {
     processName: string,
     mainWindowTitle: string,
     mainWindowHandle: number,
+    topLeftX: number,
+    topLeftY: number,
+    bottomRightX: number,
+    bottomRightY: number,
+    imageBuffer: string
+}
+
+interface CaptureTaskBarReturnValues {
     topLeftX: number,
     topLeftY: number,
     bottomRightX: number,
@@ -85,7 +93,8 @@ declare module 'win-screenshot' {
          * @public
          * @static
          * @function
-         * @param {ImageFormat} [imageFormat=ImageFormat.PNG] Specifies the format type of the image.
+         * @param {Object} [options={}] The Options object
+         * @param {Object} [options.ImageFormat=ImageFormat.PNG] Specifies the format type of the image.
          * @return {Array} [array] An array which contains multiple JS objects. The JS object is made up of:
          * processId: The Process Id of every active window.
          * processHandle: The Process Handle of every active window.
@@ -98,7 +107,24 @@ declare module 'win-screenshot' {
          * bottomRightY: Ending Coordinate Y axis of window.
          * imageBuffer: returns a base64 encoded string which needs to be converted to buffer to be written into image format.
          */
-        allWindows(imageFormat?: AllWindowsScreenShotOptions): AllWindowsReturnValues
+        allWindows(options?: ImageFormatOptions): AllWindowsReturnValues
+
+        /**
+         * This function returns coordinates of taskbar and its image buffer encoded in base64 string format.
+         *
+         * @public
+         * @static
+         * @function
+         * @param {Object} [options={}] The Options object
+         * @param {Object} [options.ImageFormat=ImageFormat.PNG] Specifies the format type of the image.
+         * @return {Array} [array] An array which contains multiple JS objects. The JS object is made up of:
+         * topLeftX: Starting Coordinate X axis of taskbar.
+         * topLeftY: Starting Coordinate Y axis of taskbar.
+         * bottomRightX: Ending Coordinate X axis of taskbar.
+         * bottomRightY: Ending Coordinate Y axis of taskbar.
+         * imageBuffer: returns a base64 encoded string which needs to be converted to buffer to be written into image format.
+         */
+        captureTaskBar(options?: ImageFormatOptions): CaptureTaskBarReturnValues
     };
 
     /**
