@@ -155,5 +155,7 @@ writeFileSync(fileName, Buffer.from(returnValues.imageBuffer, 'base64'));
 spawnSync("cmd.exe", ["/c", `explorer.exe /select, ${fileName}`]);
 ```
 
+<h3>Made with love from Souleh</h3>
+
 <h3>:clipboard: License: </h3>
 Licensed under the <a href="https://github.com/soulehshaikh99/win-screenshot/blob/master/LICENSE">MIT License</a>.
