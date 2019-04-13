@@ -129,7 +129,7 @@ writeFileSync(fileName, Buffer.from(returnValues.imageBuffer, 'base64'));
 spawnSync("cmd.exe", ["/c", `explorer.exe /select, ${fileName}`]);
 ```
 
-<strong>Screenshot of taskbar:</strong>
+<strong>Screenshot of working area of windows:</strong>
 ```javascript
 // ES6 Destructuring Assignment
 const { Screenshot, ImageFormat } = require('win-screenshot');
