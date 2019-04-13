@@ -52,10 +52,10 @@ const { writeFileSync } = require('fs');
 const { homedir } = require('os');
 const { spawnSync } = require('child_process');
 
-// Absolute File Name
+// Absolute File Path
 let fileName = `${homedir()}\\Desktop\\Coordinates Image.jpg`;
 
-let returnValues = Screenshot.captureByCoordinates({
+let imageString = Screenshot.captureByCoordinates({
     // Pass coordinates like this
     coords:{
         x1: 0,
@@ -69,12 +69,17 @@ let returnValues = Screenshot.captureByCoordinates({
 
 // You need to convert encoded base64 string into buffer before writing
 // This will save the screenshot with the specified file name.
-writeFileSync(fileName, Buffer.from(returnValues, 'base64'));
+writeFileSync(fileName, Buffer.from(imageString, 'base64'));
 
 // This will show the saved screenshot with a blue selection in an explorer window
 // using cmd as inter-process communication call,
 // once the file is done writing
 spawnSync("cmd.exe", ["/c", `explorer.exe /select, ${fileName}`]);
+```
+
+<strong>Screenshot using given coordinates:</strong>
+```javascript
+
 ```
 <h3>:clipboard: License: </h3>
 Licensed under the <a href="https://github.com/soulehshaikh99/win-screenshot/blob/master/LICENSE">MIT License</a>.
