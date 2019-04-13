@@ -1,7 +1,7 @@
 {
   "name": "win-screenshot",
-  "version": "1.3.0",
-  "description": "Screenshot Library",
+  "version": "1.0.0",
+  "description": "A mighty, robust screenshot library for Windows, Electron and Node.JS Developers",
   "main": "index.js",
   "author": "Souleh Shaikh",
   "license": "MIT",
