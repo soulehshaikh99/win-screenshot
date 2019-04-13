@@ -15,6 +15,10 @@
 3) All Active Windows can be screenshotted at once automatically just by calling a single method.
 4) This library supports various image formats to save your screenshot in. (BMP, GIF, JPEG, PNG, TIFF).
 
+Note:
+1) This library has a limitation for taking screenshots of only primary monitor/screen.
+2) It requires .NET Framework 3.5 Client Profile as it is build upon C# Code.
+
 <strong>Screenshot all active windows:</strong>
 ```javascript
 // ES6 Destructuring Assignment
