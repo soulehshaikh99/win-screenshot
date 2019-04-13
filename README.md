@@ -15,6 +15,7 @@
 3) All Active Windows can be screenshotted at once automatically just by calling a single method.
 4) This library supports various image formats to save your screenshot in. (BMP, GIF, JPEG, PNG, TIFF).
 
+<strong>Screenshot all active windows:</strong>
 ```javascript
 // ES6 Destructuring Assignment
 const { Screenshot, ImageFormat } = require('win-screenshot');
@@ -38,9 +39,42 @@ for (let r of returnValues)  {
     writeFileSync(`${directoryName}\\${r.processName}.png`, Buffer.from(r.imageBuffer, 'base64'));
 }
 
-// This will open the destination directory using cmd as inter-process communication call
+// This will open the destination directory using cmd as inter-process communication call,
+// once all screenshots are done writing
 spawnSync("cmd.exe", ["/c", `start ${directoryName}`]);
 ```
 
-<h3>:clipboard: License: </h3> 
+<strong>Screenshot using given coordinates:</strong>
+```javascript
+// ES6 Destructuring Assignment
+const { Screenshot, ImageFormat } = require('win-screenshot');
+const { writeFileSync } = require('fs');
+const { homedir } = require('os');
+const { spawnSync } = require('child_process');
+
+// Absolute File Name
+let fileName = `${homedir()}\\Desktop\\Coordinates Image.jpg`;
+
+let returnValues = Screenshot.captureByCoordinates({
+    // Pass coordinates like this
+    coords:{
+        x1: 0,
+        y1: 0,
+        x2: 800,
+        y2: 800
+    },
+    // Use of JPEG format for taking screenshot
+    imageFormat: ImageFormat.JPEG
+});
+
+// You need to convert encoded base64 string into buffer before writing
+// This will save the screenshot with the specified file name.
+writeFileSync(fileName, Buffer.from(returnValues, 'base64'));
+
+// This will show the saved screenshot with a blue selection in an explorer window
+// using cmd as inter-process communication call,
+// once the file is done writing
+spawnSync("cmd.exe", ["/c", `explorer.exe /select, ${fileName}`]);
+```
+<h3>:clipboard: License: </h3>
 Licensed under the <a href="https://github.com/soulehshaikh99/win-screenshot/blob/master/LICENSE">MIT License</a>.
