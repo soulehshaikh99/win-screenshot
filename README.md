@@ -77,9 +77,83 @@ writeFileSync(fileName, Buffer.from(imageString, 'base64'));
 spawnSync("cmd.exe", ["/c", `explorer.exe /select, ${fileName}`]);
 ```
 
-<strong>Screenshot using given coordinates:</strong>
+<strong>Screenshot of fullscreen:</strong>
 ```javascript
+// ES6 Destructuring Assignment
+const { Screenshot, ImageFormat } = require('win-screenshot');
+const { writeFileSync } = require('fs');
+const { homedir } = require('os');
+const { spawnSync } = require('child_process');
 
+// Absolute File Path
+let fileName = `${homedir()}\\Desktop\\Fullscreen Image.bmp`;
+
+let returnValues = Screenshot.captureFullScreen({
+    // Use of BMP format for taking screenshot
+    imageFormat: ImageFormat.BMP
+});
+
+// You need to convert encoded base64 string into buffer before writing
+// This will save the screenshot with the specified file name.
+writeFileSync(fileName, Buffer.from(returnValues.imageBuffer, 'base64'));
+
+// This will show the saved screenshot with a blue selection in an explorer window
+// using cmd as inter-process communication call,
+// once the file is done writing
+spawnSync("cmd.exe", ["/c", `explorer.exe /select, ${fileName}`]);
 ```
+
+<strong>Screenshot of taskbar:</strong>
+```javascript
+// ES6 Destructuring Assignment
+const { Screenshot, ImageFormat } = require('win-screenshot');
+const { writeFileSync } = require('fs');
+const { homedir } = require('os');
+const { spawnSync } = require('child_process');
+
+// Absolute File Path
+let fileName = `${homedir()}\\Desktop\\Taskbar Image.gif`;
+
+let returnValues = Screenshot.captureTaskbar({
+    // Use of GIF format for taking screenshot
+    imageFormat: ImageFormat.GIF
+});
+
+// You need to convert encoded base64 string into buffer before writing
+// This will save the screenshot with the specified file name.
+writeFileSync(fileName, Buffer.from(returnValues.imageBuffer, 'base64'));
+
+// This will show the saved screenshot with a blue selection in an explorer window
+// using cmd as inter-process communication call,
+// once the file is done writing
+spawnSync("cmd.exe", ["/c", `explorer.exe /select, ${fileName}`]);
+```
+
+<strong>Screenshot of taskbar:</strong>
+```javascript
+// ES6 Destructuring Assignment
+const { Screenshot, ImageFormat } = require('win-screenshot');
+const { writeFileSync } = require('fs');
+const { homedir } = require('os');
+const { spawnSync } = require('child_process');
+
+// Absolute File Path
+let fileName = `${homedir()}\\Desktop\\Working Area Image.tiff`;
+
+let returnValues = Screenshot.captureWorkingArea({
+    // Use of TIFF format for taking screenshot
+    imageFormat: ImageFormat.TIFF
+});
+
+// You need to convert encoded base64 string into buffer before writing
+// This will save the screenshot with the specified file name.
+writeFileSync(fileName, Buffer.from(returnValues.imageBuffer, 'base64'));
+
+// This will show the saved screenshot with a blue selection in an explorer window
+// using cmd as inter-process communication call,
+// once the file is done writing
+spawnSync("cmd.exe", ["/c", `explorer.exe /select, ${fileName}`]);
+```
+
 <h3>:clipboard: License: </h3>
 Licensed under the <a href="https://github.com/soulehshaikh99/win-screenshot/blob/master/LICENSE">MIT License</a>.
