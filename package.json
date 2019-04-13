@@ -6,5 +6,13 @@
   "author": "Souleh Shaikh",
   "license": "MIT",
   "types": "win-screenshot.d.ts",
-  "git": "https://github.com/soulehshaikh99/win-screenshot.git"
+  "keywords": ["screenshot", "screenshot-library", "windows", "node-js", "csharp", "electron"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/soulehshaikh99/win-screenshot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/soulehshaikh99/win-screenshot/issues"
+  },
+  "homepage": "https://github.com/soulehshaikh99/win-screenshot"
 }
