@@ -1,6 +1,4 @@
 const { spawnSync } = require('child_process');
-const os = require('os');
-const fs = require('fs');
 
 /**
  * A specialized enumeration version of Image Format Constants
@@ -18,54 +16,98 @@ const ImageFormat = {
 };
 
 /**
+ * Common Method which acts as a template for captureAllWindows, captureFullScreen, captureTaskBar, captureWorkingArea functions
+ *
+ * @private
+ * @function
+ * @returns {object} Returns JS Object which is parsed from executable's standard output JSON String.
+ */
+function commonMethod(options, programName) {
+    if (!options) options={};
+    let imageFormat = checkForImageFormatValidity(options);
+    let child = spawnSync("cmd.exe", ["/c", `${__dirname}\\libs\\${programName} ${imageFormat}`]);
+    return JSON.parse(child.stdout.toString());
+}
+
+/**
+ * Backend Method which acts as a template for captureByCoordinates function
+ *
+ * @private
+ * @function
+ * @returns {object} Returns JS Object which is parsed from executable's standard output JSON String.
+ */
+function coordinatesMethod(options, programName) {
+    if (!options) options={};
+    let imageFormat = checkForImageFormatValidity(options);
+    let coords = checkForCoordinatesValidity(options);
+    let child = spawnSync("cmd.exe", ["/c", `${__dirname}\\libs\\${programName} ${coords.x1} ${coords.y1} ${coords.x2} ${coords.y2} ${imageFormat}`]);
+    return child.stdout.toString();
+}
+
+/**
+ * Validity method which checks for Image Format
+ *
+ * @private
+ * @function
+ * @returns {object} [ImageFormat] Returns default value ImageFormat.PNG if no appropriate ImageFormat was found.
+ */
+function checkForImageFormatValidity(options) {
+    if ('imageFormat' in options) {
+        switch (options.imageFormat) {
+            case ImageFormat.BMP:
+                return ImageFormat.BMP;
+            case ImageFormat.GIF:
+                return ImageFormat.GIF;
+            case ImageFormat.JPEG:
+                return ImageFormat.JPEG;
+            case ImageFormat.PNG:
+                return ImageFormat.PNG;
+            case ImageFormat.TIFF:
+                return ImageFormat.TIFF;
+            default:
+                return ImageFormat.PNG;
+        }
+    } else {
+        return ImageFormat.PNG;
+    }
+}
+
+/**
+ * Validity method which checks for all coordinates values
+ *
+ * @private
+ * @function
+ * @returns {object} [ImageFormat] Returns default value (x1 = 0, y1 = 0, x2 = ScreenWidth, y2 = ScreenHeight) if no appropriate coordinate values was found.
+ */
+function checkForCoordinatesValidity(options) {
+    if ('coords' in options)    {
+        let coords = options.coords;
+        return {
+            x1: ('x1' in coords) ? coords.x1 : 0,
+            y1: ('y1' in coords) ? coords.y1 : 0,
+            x2: ('x2' in coords) ? coords.x2 : 100,
+            y2: ('y2' in coords) ? coords.y2 : 100
+        }
+    } else {
+        let child = spawnSync("cmd.exe",["/c",`${__dirname}\\libs\\get_screen_resolution.exe`]);
+        let screenResolution = JSON.parse(child.stdout.toString());
+        return {
+            x1: 0,
+            y1: 0,
+            x2: screenResolution.screenWidth,
+            y2: screenResolution.screenHeight
+        }
+    }
+}
+
+/**
  * The main class which acts as the core of module
- * containing two static functions for taking screenshots
+ * containing 5 static functions for taking screenshots
  *
  * @public
  * @class
  */
 class Screenshot {
-
-    /**
-     * This function can be used to take screenshot of a specific region if the coordinates are specified or
-     * it takes the screenshot of fullscreen.
-     *
-     * @public
-     * @static
-     * @function
-     * @param {Object} [options={}] The options object.
-     * @param {ImageFormat} [options.imageFormat=ImageFormat.PNG] Specifies the format type of the image.
-     * @param {object} [options.coords={}] The Coordinates object
-     * @param {number} [options.coords.x1] The Top Left X coordinate
-     * @param {number} [options.coords.y1] The Top Left Y coordinate
-     * @param {number} [options.coords.x2] The Bottom Right X coordinate
-     * @param {number} [options.coords.y2] The Bottom Right Y coordinate
-     * @param {string} [options.path] The absolute path where to save the screenshot.
-     *  It must contains both the parent directory and file name along with its extension.
-     *  @return {Array} It return an array containing :
-     *  writeStatus: returns true if the path parameter was specified and file was written successfully.
-     *  buffer: buffered value of the screenshot.
-     */
-    static take(options)    {
-        if (options)    {
-            let imageFormat = (options.imageFormat) ? options.imageFormat : "PNG";
-            if (options.coords) {
-                let coords = options.coords;
-                let x1 = coords.x1;
-                let x2 = coords.x2;
-                let y1 = coords.y1;
-                let y2 = coords.y2;
-                if (x1 >= 0 && y1 >= 0 && x2 >= 0 && y2 >= 0) {
-                    return commonMethod1(options.path, `${__dirname}\\libs\\screenshot_coordinates.exe ${x1} ${y1} ${x2} ${y2} ${imageFormat}`);
-                } else {
-                    throw new Exception("Missing coordinate values or negative coordinates received.")
-                }
-            }
-            else  {
-                return commonMethod1(options.path, `${__dirname}\\libs\\screenshot_fullscreen.exe ${imageFormat}`);
-            }
-        }
-    };
 
     /**
      * This function finds every possible process which has a Main Window Title or the Active Windows.
@@ -90,12 +132,28 @@ class Screenshot {
      * bottomRightY: Ending Coordinate Y axis of window.
      * imageBuffer: returns a base64 encoded string which needs to be converted to buffer to be written into image format.
      */
-    static allWindows(options)  {
-        return commonMethod2(options, "get_all_windows_data.exe");
+    static captureAllWindows(options)   {
+        return commonMethod(options, "capture_all_windows.exe");
     }
 
     /**
-     * This function returns coordinates of taskbar and its image buffer encoded in base64 string format.
+     * This function fills the missing coordinates object with some default values like (x1 = 0, y1 = 0, x2 = 100, y2 = 100)
+     * It takes a screenshot of the coordinates supplied to it if all 4 coordinates are supplied.
+     *
+     * @public
+     * @static
+     * @function
+     * @param {Object} [options={}] The Options object
+     * @param {Object} [options.ImageFormat=ImageFormat.PNG] Specifies the format type of the image.
+     * @return {string}returns a base64 encoded string which needs to be converted to buffer to be written into image format
+     */
+    static captureByCoordinates(options)    {
+        return coordinatesMethod(options, "capture_coordinates.exe");
+    }
+
+    /**
+     * This function finds the Current Screen Region Coordinates for e.g. (0, 0, 1600, 900).
+     * The last 2 coordinates are the current screen's resolution (width and height).
      *
      * @public
      * @static
@@ -109,56 +167,47 @@ class Screenshot {
      * bottomRightY: Ending Coordinate Y axis of taskbar.
      * imageBuffer: returns a base64 encoded string which needs to be converted to buffer to be written into image format.
      */
-    static captureTaskBar(options) {
-        return commonMethod2(options, "capture_taskbar.exe");
+    static captureFullScreen(options)   {
+        return commonMethod(options, "capture_fullscreen.exe");
     }
-}
 
-/**
- * Common Method for take function
- *
- * @private
- * @function
- * @param {string} [path] Specifies the format type of the image.
- * @param {string} [command] Specifies the inter-process call command i.e. executable name with appropriate arguments
- * @return {Array} It return an array containing :
- * writeStatus: returns true if the path parameter was specified and file was written successfully.
- * buffer: returns a base64 encoded string which needs to be converted to buffer to be written into image format.
- */
-function commonMethod1(path, command) {
-    const tempFile = `${os.tmpdir()}\\temp1.png`;
-    const process = spawnSync('cmd.exe', ["/c", `${command} ${tempFile}`]);
-    if (process.status === 0)   {
-        let buffer = fs.readFileSync(tempFile);
-        let status = [];
-        fs.unlinkSync(tempFile);
-        if (path)   {
-            fs.writeFileSync(path, buffer);
-            status['writeStatus'] = (fs.existsSync(path));
-        }
-        status['buffer'] = buffer;
-        return {...status};
-    } else  {
-        return new Exception('Process failed due to an unknown error!'); 
+    /**
+     * This function finds the alignment of taskbar and accordingly calculates its coordinates and
+     * selects the most appropriate coordinates of taskbar and converts it into relevant data.
+     *
+     * @public
+     * @static
+     * @function
+     * @param {Object} [options={}] The Options object
+     * @param {Object} [options.ImageFormat=ImageFormat.PNG] Specifies the format type of the image.
+     ** @return {Array} [array] An array which contains multiple JS objects. The JS object is made up of:
+     * topLeftX: Starting Coordinate X axis of taskbar.
+     * topLeftY: Starting Coordinate Y axis of taskbar.
+     * bottomRightX: Ending Coordinate X axis of taskbar.
+     * bottomRightY: Ending Coordinate Y axis of taskbar.
+     * imageBuffer: returns a base64 encoded string which needs to be converted to buffer to be written into image format.
+     */
+    static captureTaskbar(options) {
+        return commonMethod(options, "capture_taskbar.exe");
     }
-}
 
-/**
- * Common Method for allWindows and captureTaskBar function
- *
- * @private
- * @function
- * @param {Object} [options={}] The Options object
- * @param {Object} [options.imageFormat=ImageFormat.PNG] Specifies the format type of the image.
- * @param {string} [programName] Specifies the program name for inter-process communication call.
- * @return {Array} It return an array containing the appropriate JS Object parsed from JSON data fetched from executable.
- */
-function commonMethod2(options, programName)    {
-    if (options) {
-        let child = spawnSync("cmd.exe", ["/c", `${__dirname}\\libs\\${programName} ${options.imageFormat}`]);
-        return JSON.parse(child.stdout.toString());
-    } else {
-        throw new Exception("Missing parameter format name { PNG, JPEG, GIF, BMP, TIFF}");
+    /**
+     * This function finds the working area of the Windows Screen excluding the taskbar from the screenshot.
+     *
+     * @public
+     * @static
+     * @function
+     * @param {Object} [options={}] The Options object
+     * @param {Object} [options.ImageFormat=ImageFormat.PNG] Specifies the format type of the image.
+     ** @return {Array} [array] An array which contains multiple JS objects. The JS object is made up of:
+     * topLeftX: Starting Coordinate X axis of taskbar.
+     * topLeftY: Starting Coordinate Y axis of taskbar.
+     * bottomRightX: Ending Coordinate X axis of taskbar.
+     * bottomRightY: Ending Coordinate Y axis of taskbar.
+     * imageBuffer: returns a base64 encoded string which needs to be converted to buffer to be written into image format.
+     */
+    static captureWorkingArea(options)  {
+        return commonMethod(options, "capture_working_area.exe");
     }
 }
 
