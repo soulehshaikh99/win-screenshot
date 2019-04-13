@@ -1,4 +1,4 @@
-interface TakeScreenShotOptions {
+interface CaptureByCoordinatesOptions {
     imageFormat?: {
         BMP : "BMP",
         GIF : "GIF",
@@ -12,10 +12,9 @@ interface TakeScreenShotOptions {
         x2: number
         y2: number
     }
-    path?: string
 }
 
-interface ImageFormatOptions   {
+interface ImageFormatOptions {
     imageFormat?: {
         BMP : "BMP",
         GIF : "GIF",
@@ -23,11 +22,6 @@ interface ImageFormatOptions   {
         PNG : "PNG",
         TIFF : "TIFF"
     }
-}
-
-interface TakeReturnValues {
-    writeStatus: boolean,
-    buffer: string
 }
 
 interface AllWindowsReturnValues {
@@ -43,7 +37,7 @@ interface AllWindowsReturnValues {
     imageBuffer: string
 }
 
-interface CaptureTaskBarReturnValues {
+interface ScreenshotReturnValues {
     topLeftX: number,
     topLeftY: number,
     bottomRightX: number,
@@ -55,34 +49,12 @@ declare module 'win-screenshot' {
 
     /**
      * The main class which acts as the core of module
-     * containing two static functions for taking screenshots
+     * containing 5 static functions for taking screenshots
      *
      * @public
      * @class
      */
     const Screenshot : {
-
-        /**
-         * This function can be used to take screenshot of a specific region if the coordinates are specified or
-         * it takes the screenshot of fullscreen.
-         *
-         * @public
-         * @static
-         * @function
-         * @param {Object} [options={}] The options object.
-         * @param {ImageFormat} [options.imageFormat=ImageFormat.PNG] Specifies the format type of the image.
-         * @param {object} [options.coords={}] The Coordinates object
-         * @param {number} [options.coords.x1] The Top Left X coordinate
-         * @param {number} [options.coords.y1] The Top Left Y coordinate
-         * @param {number} [options.coords.x2] The Bottom Right X coordinate
-         * @param {number} [options.coords.y2] The Bottom Right Y coordinate
-         * @param {string} [options.path] The absolute path where to save the screenshot.
-         *  It must contains both the parent directory and file name along with its extension.
-         *  @return {Array} It return an array containing :
-         *  writeStatus: returns true if the path parameter was specified and file was written successfully.
-         *  buffer: returns a base64 encoded string which needs to be converted to buffer to be written into image format.
-         */
-        take(options?: TakeScreenShotOptions): TakeReturnValues,
 
         /**
          * This function finds every possible process which has a Main Window Title or the Active Windows.
@@ -107,10 +79,24 @@ declare module 'win-screenshot' {
          * bottomRightY: Ending Coordinate Y axis of window.
          * imageBuffer: returns a base64 encoded string which needs to be converted to buffer to be written into image format.
          */
-        allWindows(options?: ImageFormatOptions): AllWindowsReturnValues
+        captureAllWindows(options? : ImageFormatOptions) : AllWindowsReturnValues[];
 
         /**
-         * This function returns coordinates of taskbar and its image buffer encoded in base64 string format.
+         * This function fills the missing coordinates object with some default values like (x1 = 0, y1 = 0, x2 = 100, y2 = 100)
+         * It takes a screenshot of the coordinates supplied to it if all 4 coordinates are supplied.
+         *
+         * @public
+         * @static
+         * @function
+         * @param {Object} [options={}] The Options object
+         * @param {Object} [options.ImageFormat=ImageFormat.PNG] Specifies the format type of the image.
+         * @return {string}returns a base64 encoded string which needs to be converted to buffer to be written into image format
+         */
+        captureByCoordinates(options? : CaptureByCoordinatesOptions) : string;
+
+        /**
+         * This function finds the Current Screen Region Coordinates for e.g. (0, 0, 1600, 900).
+         * The last 2 coordinates are the current screen's resolution (width and height).
          *
          * @public
          * @static
@@ -124,7 +110,42 @@ declare module 'win-screenshot' {
          * bottomRightY: Ending Coordinate Y axis of taskbar.
          * imageBuffer: returns a base64 encoded string which needs to be converted to buffer to be written into image format.
          */
-        captureTaskBar(options?: ImageFormatOptions): CaptureTaskBarReturnValues
+        captureFullScreen(options? : ImageFormatOptions) : ScreenshotReturnValues;
+
+        /**
+         * This function finds the alignment of taskbar and accordingly calculates its coordinates and
+         * selects the most appropriate coordinates of taskbar and converts it into relevant data.
+         *
+         * @public
+         * @static
+         * @function
+         * @param {Object} [options={}] The Options object
+         * @param {Object} [options.ImageFormat=ImageFormat.PNG] Specifies the format type of the image.
+         ** @return {Array} [array] An array which contains multiple JS objects. The JS object is made up of:
+         * topLeftX: Starting Coordinate X axis of taskbar.
+         * topLeftY: Starting Coordinate Y axis of taskbar.
+         * bottomRightX: Ending Coordinate X axis of taskbar.
+         * bottomRightY: Ending Coordinate Y axis of taskbar.
+         * imageBuffer: returns a base64 encoded string which needs to be converted to buffer to be written into image format.
+         */
+        captureTaskbar(options? : ImageFormatOptions) : ScreenshotReturnValues;
+
+        /**
+         * This function finds the working area of the Windows Screen excluding the taskbar from the screenshot.
+         *
+         * @public
+         * @static
+         * @function
+         * @param {Object} [options={}] The Options object
+         * @param {Object} [options.ImageFormat=ImageFormat.PNG] Specifies the format type of the image.
+         ** @return {Array} [array] An array which contains multiple JS objects. The JS object is made up of:
+         * topLeftX: Starting Coordinate X axis of taskbar.
+         * topLeftY: Starting Coordinate Y axis of taskbar.
+         * bottomRightX: Ending Coordinate X axis of taskbar.
+         * bottomRightY: Ending Coordinate Y axis of taskbar.
+         * imageBuffer: returns a base64 encoded string which needs to be converted to buffer to be written into image format.
+         */
+        captureWorkingArea(options? : ImageFormatOptions) : ScreenshotReturnValues;
     };
 
     /**
