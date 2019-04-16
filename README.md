@@ -2,6 +2,11 @@
 
 > :rocket: :telescope: A mighty, robust screenshot library for Windows, Electron and Node.JS Developers.
 
+<strong>Install</strong>
+```
+$ npm i win-screenshot
+```
+
 <strong>Screenshot type offered by this library:</strong>
 1) Coordinate Based or Specific Region (x1, y1, x2, y2)
 2) Full Screen
