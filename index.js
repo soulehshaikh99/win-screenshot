@@ -132,8 +132,10 @@ class Screenshot {
      * bottomRightY: Ending Coordinate Y axis of window.
      * imageBuffer: returns a base64 encoded string which needs to be converted to buffer to be written into image format.
      */
-    static captureAllWindows(options)   {
-        return commonMethod(options, "capture_all_windows.exe");
+    static captureAllWindows(options) {
+        return new Promise(function (resolve, reject) {
+            resolve(commonMethod(options, "capture_all_windows.exe"));
+        });
     }
 
     /**
@@ -147,8 +149,10 @@ class Screenshot {
      * @param {Object} [options.ImageFormat=ImageFormat.PNG] Specifies the format type of the image.
      * @return {string}returns a base64 encoded string which needs to be converted to buffer to be written into image format
      */
-    static captureByCoordinates(options)    {
-        return coordinatesMethod(options, "capture_coordinates.exe");
+    static captureByCoordinates(options) {
+        return new Promise(function (resolve, reject) {
+            resolve(coordinatesMethod(options, "capture_coordinates.exe"));
+        });
     }
 
     /**
@@ -167,8 +171,10 @@ class Screenshot {
      * bottomRightY: Ending Coordinate Y axis of taskbar.
      * imageBuffer: returns a base64 encoded string which needs to be converted to buffer to be written into image format.
      */
-    static captureFullScreen(options)   {
-        return commonMethod(options, "capture_fullscreen.exe");
+    static captureFullScreen(options) {
+        return new Promise(function (resolve, reject) {
+            resolve(commonMethod(options, "capture_fullscreen.exe"));
+        });
     }
 
     /**
@@ -188,7 +194,9 @@ class Screenshot {
      * imageBuffer: returns a base64 encoded string which needs to be converted to buffer to be written into image format.
      */
     static captureTaskbar(options) {
-        return commonMethod(options, "capture_taskbar.exe");
+        return new Promise(function (resolve, reject) {
+            resolve(commonMethod(options, "capture_taskbar.exe"));
+        });
     }
 
     /**
@@ -206,8 +214,10 @@ class Screenshot {
      * bottomRightY: Ending Coordinate Y axis of taskbar.
      * imageBuffer: returns a base64 encoded string which needs to be converted to buffer to be written into image format.
      */
-    static captureWorkingArea(options)  {
-        return commonMethod(options, "capture_working_area.exe");
+    static captureWorkingArea(options) {
+        return new Promise(function (resolve, reject) {
+            resolve(commonMethod(options, "capture_working_area.exe"));
+        });
     }
 }
 
