@@ -67,26 +67,29 @@ const { spawnSync } = require('child_process');
 // Absolute File Path
 let fileName = `${homedir()}\\Desktop\\Coordinates Image.jpg`;
 
-let imageString = Screenshot.captureByCoordinates({
+Screenshot.captureByCoordinates({
+
     // Pass coordinates like this
-    coords:{
-        x1: 0,
-        y1: 0,
-        x2: 800,
-        y2: 800
+    coords: {
+        x1: 50,
+        y1: 50,
+        x2: 400,
+        y2: 400
     },
     // Use of JPEG format for taking screenshot
     imageFormat: ImageFormat.JPEG
+
+}).then(response => {
+
+    // You need to convert encoded base64 string into buffer before writing
+    // This will save the screenshot with the specified file name.
+    writeFileSync(fileName, Buffer.from(response, 'base64'));
+
+    // This will show the saved screenshot with a blue selection in an explorer window
+    // using cmd as inter-process communication call,
+    // once the file is done writing
+    spawnSync("cmd.exe", ["/c", `explorer.exe /select, ${fileName}`]);
 });
-
-// You need to convert encoded base64 string into buffer before writing
-// This will save the screenshot with the specified file name.
-writeFileSync(fileName, Buffer.from(imageString, 'base64'));
-
-// This will show the saved screenshot with a blue selection in an explorer window
-// using cmd as inter-process communication call,
-// once the file is done writing
-spawnSync("cmd.exe", ["/c", `explorer.exe /select, ${fileName}`]);
 ```
 
 <strong>Screenshot of fullscreen:</strong>
