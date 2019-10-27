@@ -35,22 +35,25 @@ const { spawnSync } = require('child_process');
 // Destination Directory
 const directoryName = `${homedir()}\\Desktop`;
 
-let returnValues = Screenshot.captureAllWindows({
+Screenshot.captureAllWindows({
+    
     // Use of PNG format for taking screenshot
     imageFormat: ImageFormat.PNG
+
+}).then(response => {
+
+    // This is necessary as the response of captureAllWindows() is an array
+    for (let r of response) {
+        // Now r contains an element from the array
+        // You need to convert encoded base64 string into buffer before writing
+        // This will save each screenshot with its process name.
+        writeFileSync(`${directoryName}\\${r.processName}.png`, Buffer.from(r.imageBuffer, 'base64'));
+    }
+
+    // This will open the destination directory using cmd as inter-process communication call,
+    // once all screenshots are done writing
+    spawnSync("cmd.exe", ["/c", `start ${directoryName}`]);
 });
-
-// This is necessary as the return Value of captureAllWindows() is an array
-for (let r of returnValues)  {
-    // Now r contains an element from the array
-    // You need to convert encoded base64 string into buffer before writing
-    // This will save each screenshot with its process name.
-    writeFileSync(`${directoryName}\\${r.processName}.png`, Buffer.from(r.imageBuffer, 'base64'));
-}
-
-// This will open the destination directory using cmd as inter-process communication call,
-// once all screenshots are done writing
-spawnSync("cmd.exe", ["/c", `start ${directoryName}`]);
 ```
 
 <strong>Screenshot using given coordinates:</strong>
