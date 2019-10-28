@@ -32,6 +32,7 @@ interface AllWindowsReturnValues {
     topLeftY: number,
     bottomRightX: number,
     bottomRightY: number,
+    dataMIME: string,
     imageBuffer: string
 }
 
@@ -40,6 +41,7 @@ interface ScreenshotReturnValues {
     topLeftY: number,
     bottomRightX: number,
     bottomRightY: number,
+    dataMIME: string,
     imageBuffer: string
 }
 
@@ -77,7 +79,7 @@ declare module 'win-screenshot' {
          * bottomRightY: Ending Coordinate Y axis of window.
          * imageBuffer: returns a base64 encoded string which needs to be converted to buffer to be written into image format.
          */
-        captureAllWindows(options? : ImageFormatOptions | object) : AllWindowsReturnValues[];
+        captureAllWindows(options? : ImageFormatOptions | object) : Promise<AllWindowsReturnValues[]>;
 
         /**
          * This function fills the missing coordinates object with some default values like (x1 = 0, y1 = 0, x2 = 100, y2 = 100)
@@ -90,7 +92,7 @@ declare module 'win-screenshot' {
          * @param {Object} [options.ImageFormat=ImageFormat.PNG] Specifies the format type of the image.
          * @return {string}returns a base64 encoded string which needs to be converted to buffer to be written into image format
          */
-        captureByCoordinates(options? : CaptureByCoordinatesOptions | object) : string;
+        captureByCoordinates(options? : CaptureByCoordinatesOptions | object) : Promise<ScreenshotReturnValues>;
 
         /**
          * This function finds the Current Screen Region Coordinates for e.g. (0, 0, 1600, 900).
@@ -108,7 +110,7 @@ declare module 'win-screenshot' {
          * bottomRightY: Ending Coordinate Y axis of taskbar.
          * imageBuffer: returns a base64 encoded string which needs to be converted to buffer to be written into image format.
          */
-        captureFullScreen(options? : ImageFormatOptions | object) : ScreenshotReturnValues;
+        captureFullScreen(options? : ImageFormatOptions | object) : Promise<ScreenshotReturnValues>;
 
         /**
          * This function finds the alignment of taskbar and accordingly calculates its coordinates and
@@ -126,7 +128,7 @@ declare module 'win-screenshot' {
          * bottomRightY: Ending Coordinate Y axis of taskbar.
          * imageBuffer: returns a base64 encoded string which needs to be converted to buffer to be written into image format.
          */
-        captureTaskbar(options? : ImageFormatOptions | object) : ScreenshotReturnValues;
+        captureTaskbar(options? : ImageFormatOptions | object) : Promise<ScreenshotReturnValues>;
 
         /**
          * This function finds the working area of the Windows Screen excluding the taskbar from the screenshot.
@@ -143,7 +145,7 @@ declare module 'win-screenshot' {
          * bottomRightY: Ending Coordinate Y axis of taskbar.
          * imageBuffer: returns a base64 encoded string which needs to be converted to buffer to be written into image format.
          */
-        captureWorkingArea(options? : ImageFormatOptions | object) : ScreenshotReturnValues;
+        captureWorkingArea(options? : ImageFormatOptions | object) : Promise<ScreenshotReturnValues>;
     };
 
     /**
