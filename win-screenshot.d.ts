@@ -1,6 +1,5 @@
 interface CaptureByCoordinatesOptions {
     imageFormat?: {
-        BMP : "BMP",
         GIF : "GIF",
         JPEG : "JPEG",
         PNG : "PNG",
@@ -16,7 +15,6 @@ interface CaptureByCoordinatesOptions {
 
 interface ImageFormatOptions {
     imageFormat?: {
-        BMP : "BMP",
         GIF : "GIF",
         JPEG : "JPEG",
         PNG : "PNG",
@@ -156,7 +154,6 @@ declare module 'win-screenshot' {
      * @returns {string} Returns `Image Format Name`.
      */
     const ImageFormat : {
-        BMP : "BMP",
         GIF : "GIF",
         JPEG : "JPEG",
         PNG : "PNG",
