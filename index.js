@@ -25,7 +25,6 @@ function commonMethod(options, programName) {
     if (!options) options={};
     let imageFormat = checkForImageFormatValidity(options);
     let child = spawnSync("cmd.exe", ["/c", `${__dirname}\\libs\\${programName} ${imageFormat}`]);
-    console.log(`${__dirname}\\libs\\${programName} ${imageFormat}`);
     return JSON.parse(child.stdout.toString());
 }
 
@@ -41,7 +40,7 @@ function coordinatesMethod(options, programName) {
     let imageFormat = checkForImageFormatValidity(options);
     let coords = checkForCoordinatesValidity(options);
     let child = spawnSync("cmd.exe", ["/c", `${__dirname}\\libs\\${programName} ${coords.x1} ${coords.y1} ${coords.x2} ${coords.y2} ${imageFormat}`]);
-    return child.stdout.toString();
+    return JSON.parse(child.stdout.toString());
 }
 
 /**
@@ -54,8 +53,6 @@ function coordinatesMethod(options, programName) {
 function checkForImageFormatValidity(options) {
     if ('imageFormat' in options) {
         switch (options.imageFormat) {
-            case ImageFormat.BMP:
-                return ImageFormat.BMP;
             case ImageFormat.GIF:
                 return ImageFormat.GIF;
             case ImageFormat.JPEG:
@@ -64,8 +61,6 @@ function checkForImageFormatValidity(options) {
                 return ImageFormat.PNG;
             case ImageFormat.TIFF:
                 return ImageFormat.TIFF;
-            default:
-                return ImageFormat.PNG;
         }
     } else {
         return ImageFormat.PNG;
