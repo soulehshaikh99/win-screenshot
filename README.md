@@ -101,21 +101,24 @@ const { homedir } = require('os');
 const { spawnSync } = require('child_process');
 
 // Absolute File Path
-let fileName = `${homedir()}\\Desktop\\Fullscreen Image.bmp`;
+let fileName = `${homedir()}\\Desktop\\Fullscreen Image.png`;
 
-let returnValues = Screenshot.captureFullScreen({
-    // Use of BMP format for taking screenshot
-    imageFormat: ImageFormat.BMP
+Screenshot.captureFullScreen({
+
+    // Use of PNG format for taking screenshot
+    imageFormat: ImageFormat.PNG
+
+}).then(response => {
+
+    // You need to convert encoded base64 string into buffer before writing
+    // This will save the screenshot with the specified file name.
+    writeFileSync(fileName, Buffer.from(response.imageBuffer, 'base64'));
+
+    // This will show the saved screenshot with a blue selection in an explorer window
+    // using cmd as inter-process communication call,
+    // once the file is done writing
+    spawnSync("cmd.exe", ["/c", `explorer.exe /select, ${fileName}`]);
 });
-
-// You need to convert encoded base64 string into buffer before writing
-// This will save the screenshot with the specified file name.
-writeFileSync(fileName, Buffer.from(returnValues.imageBuffer, 'base64'));
-
-// This will show the saved screenshot with a blue selection in an explorer window
-// using cmd as inter-process communication call,
-// once the file is done writing
-spawnSync("cmd.exe", ["/c", `explorer.exe /select, ${fileName}`]);
 ```
 
 <strong>Screenshot of taskbar:</strong>
