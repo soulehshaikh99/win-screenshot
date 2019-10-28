@@ -11,8 +11,7 @@ const ImageFormat = {
     PNG : "PNG",
     JPEG: "JPEG",
     TIFF: "TIFF",
-    GIF: "GIF",
-    BMP: "BMP"
+    GIF: "GIF"
 };
 
 /**
