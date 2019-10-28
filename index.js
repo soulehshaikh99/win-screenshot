@@ -26,6 +26,7 @@ function commonMethod(options, programName) {
     if (!options) options={};
     let imageFormat = checkForImageFormatValidity(options);
     let child = spawnSync("cmd.exe", ["/c", `${__dirname}\\libs\\${programName} ${imageFormat}`]);
+    console.log(`${__dirname}\\libs\\${programName} ${imageFormat}`);
     return JSON.parse(child.stdout.toString());
 }
 
