@@ -43,12 +43,12 @@ Screenshot.captureAllWindows({
 }).then(response => {
 
     // This is necessary as the response of captureAllWindows() is an array
-    for (let r of response) {
-        // Now r contains an element from the array
+    response.forEach(obj => {
+        // Now obj contains an element from the array
         // You need to convert encoded base64 string into buffer before writing
         // This will save each screenshot with its process name.
-        writeFileSync(`${directoryName}\\${r.processName}.png`, Buffer.from(r.imageBuffer, 'base64'));
-    }
+        writeFileSync(`${directoryName}\\${obj.processName}.png`, Buffer.from(obj.imageBuffer, 'base64'));
+    })
 
     // This will open the destination directory using cmd as inter-process communication call,
     // once all screenshots are done writing
@@ -80,10 +80,10 @@ Screenshot.captureByCoordinates({
     imageFormat: ImageFormat.JPEG
 
 }).then(response => {
-
+    
     // You need to convert encoded base64 string into buffer before writing
     // This will save the screenshot with the specified file name.
-    writeFileSync(fileName, Buffer.from(response, 'base64'));
+    writeFileSync(fileName, Buffer.from(response.imageBuffer, 'base64'));
 
     // This will show the saved screenshot with a blue selection in an explorer window
     // using cmd as inter-process communication call,
