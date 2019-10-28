@@ -18,7 +18,7 @@ $ npm i win-screenshot
 1) It is capable of finding accurate coordinates of an Active Window or Taskbar irrespective of the taskbar location (BOTTOM, LEFT, TOP, RIGHT) on the screen.
 2) This is a Node.JS library but some part of the backend is developed using C#, which is useful for invoking Windows native methods easily.
 3) All Active Windows can be screenshotted at once automatically just by calling a single method.
-4) This library supports various image formats to save your screenshot in. (BMP, GIF, JPEG, PNG, TIFF).
+4) This library supports various image formats to save your screenshot in. (GIF, JPEG, PNG, TIFF).
 
 <strong>Note:</strong>
 1) This library has a limitation for taking screenshots of only primary monitor/screen.
