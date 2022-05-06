@@ -60,8 +60,6 @@ async function coordinatesMethod(options, programName) {
 		})
 	
 		child.on('close', (code) => {
-			console.log(`child process exited with code ${code}`)
-
 			let dataBuffer =  Buffer.concat(bufferArray)
 			
 			resolve(JSON.parse(dataBuffer.toString()))
