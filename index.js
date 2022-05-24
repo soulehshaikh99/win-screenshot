@@ -35,12 +35,36 @@ function commonMethod(options, programName) {
  * @function
  * @returns {object} Returns JS Object which is parsed from executable's standard output JSON String.
  */
-function coordinatesMethod(options, programName) {
+async function coordinatesMethod(options, programName) {
     if (!options) options={};
     let imageFormat = checkForImageFormatValidity(options);
     let coords = checkForCoordinatesValidity(options);
-    let child = spawnSync("cmd.exe", ["/c", `${__dirname}\\libs\\${programName} ${coords.x1} ${coords.y1} ${coords.x2} ${coords.y2} ${imageFormat}`]);
-    return JSON.parse(child.stdout.toString());
+
+    /*
+        Since the character limit for stdout is 8192, we need to hook onto the buffer-stream
+        to gather the info and then wait for close to put it all together. We make this an
+        async promise to keep inline with the async behavior from before.
+    */
+	return await new Promise((resolve, reject) => {
+		let child = spawn("cmd.exe", ["/c", `${__dirname}\\libs\\${programName} ${coords.x1} ${coords.y1} ${coords.x2} ${coords.y2} ${imageFormat}`])
+    
+		let bufferArray= []
+
+		child.stdout.on('data', (data) => {
+			bufferArray.push(data)
+		})
+	
+		child.stderr.on('data', (data) => {
+			console.error(`stderr: ${data}`)
+            reject(`stderr: ${data}`)
+		})
+	
+		child.on('close', (code) => {
+			let dataBuffer =  Buffer.concat(bufferArray)
+			
+			resolve(JSON.parse(dataBuffer.toString()))
+		})
+	})
 }
 
 /**
